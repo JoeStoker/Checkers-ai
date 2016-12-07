@@ -1,0 +1,14 @@
+.grid_button {
+	width: 75px;
+	height: 75px;
+	
+}
+.red {
+	background-color: red;
+}
+.black {
+	background-color: black;
+}
+.white {
+	background-color: white;
+}
