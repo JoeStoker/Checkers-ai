@@ -62,7 +62,7 @@ var force = d3.layout.force()
     .attr("width", width)
     .attr("height", height);
    
-    console.log(str);
+    //console.log(str);
     //d3.json("https://gist.githubusercontent.com/fredbenenson/4212290/raw/38c07e833ba7dd2f5cff1a2316c2559c01b774d4/miserables.json", function(error, graph) {
       graph = JSON.parse(str);
       function update ( graph) {

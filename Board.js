@@ -2,6 +2,7 @@ var DOWNRIGHT = 1;
 var DOWNLEFT = 2;
 var UPLEFT = 3;
 var UPRIGHT = 4;
+var MUSTJUMP = false;
 function canMoveUpLeft(board, oldPos, pieceType) {
 	// if ((((oldPos%8)|0)+((oldPos/8)|0))%2 == 0) {
 	// 	return false;
@@ -112,6 +113,9 @@ function canJumpUpLeft(prevPos, board, myPiece, myKing, enemyPiece, enemyKing) {
 	if (upleft < 0) {
 		return false;
 	}
+	if (board[prevPos] == AI) {
+		return false;
+	}
 	if ((board[prevPos-9] == enemyPiece || board[prevPos-9] == enemyKing) && board[prevPos-18] == WHITE) {
 		console.log("can jump up left");
 		return true;
@@ -123,6 +127,9 @@ function canJumpUpRight(prevPos, board, myPiece, myKing, enemyPiece, enemyKing) 
 	var upright = prevPos-14;
 	
 	if (upright < 0) {
+		return false;
+	}
+	if (board[prevPos] == AI) {
 		return false;
 	}
 	if ((board[prevPos-7] == enemyPiece || board[prevPos-7] == enemyKing) && board[prevPos-14] == WHITE) {
@@ -138,6 +145,9 @@ function canJumpDownLeft(prevPos, board, myPiece, myKing, enemyPiece, enemyKing)
 	if (upleft > 64) {
 		return false;
 	}
+	if (board[prevPos] == HUMAN) {
+		return false;
+	}
 	if ((board[prevPos+7] == enemyPiece || board[prevPos+7] == enemyKing) && board[prevPos+14] == WHITE) {
 		console.log("can jump down left");
 		return true;
@@ -147,8 +157,12 @@ function canJumpDownLeft(prevPos, board, myPiece, myKing, enemyPiece, enemyKing)
 
 function canJumpDownRight(prevPos, board, myPiece, myKing, enemyPiece, enemyKing) {
 	var upleft = prevPos+18;
+
 	
 	if (upleft > 64) {
+		return false;
+	}
+	if (board[prevPos] == HUMAN) {
 		return false;
 	}
 	if ((board[prevPos+9] == enemyPiece || board[prevPos+9] == enemyKing) && board[prevPos+18] == WHITE) {
@@ -212,29 +226,29 @@ function getScore(board, depth) {
 function moveUpLeft(board, oldPos) {
 	board[oldPos - 9] = board[oldPos];
 	board[oldPos] = WHITE;
-	changeColor(oldPos,WHITE);
-	changeColor(oldPos - 9, board[oldPos - 9]);
+	//changeColor(oldPos,WHITE);
+	//changeColor(oldPos - 9, board[oldPos - 9]);
 }
 
 function moveUpRight(board, oldPos) {
 	board[oldPos - 7] = board[oldPos];
 	board[oldPos] = WHITE;
-	changeColor(oldPos,WHITE);
-	changeColor(oldPos - 7, board[oldPos - 7]);
+	//changeColor(oldPos,WHITE);
+	//changeColor(oldPos - 7, board[oldPos - 7]);
 }
 
 function moveDownLeft(board, oldPos) {
 	board[oldPos + 7] = board[oldPos];
 	board[oldPos] = WHITE;
-	changeColor(oldPos,WHITE);
-	changeColor(oldPos + 7, board[oldPos + 7]);
+	//changeColor(oldPos,WHITE);
+	//changeColor(oldPos + 7, board[oldPos + 7]);
 }
 
 function moveDownRight(board, oldPos) {
 	board[oldPos + 9] = board[oldPos];
 	board[oldPos] = WHITE;
-	changeColor(oldPos,WHITE);
-	changeColor(oldPos + 9, board[oldPos + 9]);
+	//changeColor(oldPos,WHITE);
+	//changeColor(oldPos + 9, board[oldPos + 9]);
 }
 
 function copyBoard(board) {
@@ -263,7 +277,23 @@ function move(id, board) {
 		console.log("Ready to wait");
 		return;
 	}
-
+	MUSTJUMP = false;
+	for (var i = 0; i < board.length; i++) {
+		
+		if (board[i] == HUMAN || board[i] == HUMANKING) {
+			
+			if (canJump(i, board, HUMAN, HUMANKING, AI, AIKING)) {
+				MUSTJUMP = true;
+				console.log("Someone can jump!");
+				break;
+			}
+		}
+	}
+	if (!MUSTJUMP) {
+		console.log("No one can jump!");
+	} else {
+		console.log("Someone can jump!");
+	}
 	
 	paintWholeBoard(); // Debuggin purposes
 	if (waiting) {
@@ -284,8 +314,10 @@ function move(id, board) {
 			paintWholeBoard();
 			if (canJump(id, board, HUMAN, HUMANKING, AI, AIKING)) { //TODO change this to anyone can jump?
 				previousClick = id;
+				MUSTJUMP = true;
 				return;
 			} else {
+				MUSTJUMP = false;
 				var delay=500; //1 second
 				playerTurn = false;
 				setTimeout(function() {
@@ -294,7 +326,8 @@ function move(id, board) {
 				}, delay);
 				return;
 			}
-		} else if (canMove(board, previousClick, id)) {
+		} else if (canMove(board, previousClick, id) && !MUSTJUMP) {
+			console.log("can't jump")
 			console.log(getMoveType(previousClick, id));
 			if (getMoveType(previousClick, id) == -1) {
 				return;
@@ -319,16 +352,19 @@ function move(id, board) {
 			paintWholeBoard();
 			var delay=500; //1 second
 			playerTurn = false;
+			MUSTJUMP = false;
+			
+			setTimeout(function() {
+			  makeAiMove();
+			  playerTurn = true;
+			}, delay);
 
-			// Coming soon /////////////////////////////////////////////////////////////////
-			// setTimeout(function() {
-			//   makeAiMove();
-			//   playerTurn = true;
-			// }, delay);
-			playerTurn = true;
+			return;
+		} else if (MUSTJUMP) {
+			console.log("Must jump!");
 			return;
 		} else {
-			console.log("Cant jump or move");
+			console.log("Can't jump or move");
 			return;
 		}
 	} else {
