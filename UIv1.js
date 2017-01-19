@@ -341,6 +341,17 @@ function createButtons() {
 	    myTable+="<button id = '"+i+"' class = 'grid_button' type='button' onclick='move("+i+");'></button>";
   	}  
   	for (var i = 0; i < 64; i++) {
+
+  		// Simple jump
+  		// if (i < 16) {
+  		// 	board[i] = 1;
+  		// } else if (i > 47) {
+  		// 	board[i] = 2;
+  		// } else {
+  		// 	board[i] = 0;
+  		// }
+
+  		// Double jump
   		if (i < 16) {
   			board[i] = 1;
   		} else if (i > 47) {

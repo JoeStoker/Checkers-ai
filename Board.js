@@ -7,6 +7,9 @@ function canMoveUpLeft(board, oldPos, pieceType) {
 	// if ((((oldPos%8)|0)+((oldPos/8)|0))%2 == 0) {
 	// 	return false;
 	// }
+	if (oldPos%8 == 0) {
+		return false;
+	}
 	if (pieceType == AI) {
 		return false;
 	}
@@ -26,6 +29,9 @@ function canMoveUpRight(board, oldPos, pieceType) {
 	if (pieceType == AI) {
 		return false;
 	}
+	if (oldPos%8 == 7) {
+		return false;
+	}
 	if (oldPos - 7 < 0) {
 		return false;
 	}
@@ -39,6 +45,9 @@ function canMoveDownLeft(board, oldPos, pieceType) {
 	// if ((((oldPos%8)|0)+((oldPos/8)|0))%2 == 0) {
 	// 	return false;
 	// }
+	if (oldPos%8 == 0) {
+		return false;
+	}
 	if (pieceType == HUMAN) {
 		return false;
 	}
@@ -56,6 +65,9 @@ function canMoveDownRight(board, oldPos, pieceType) {
 	// 	return false;
 	// }
 	if (pieceType == HUMAN) {
+		return false;
+	}
+	if (oldPos%8 == 7) {
 		return false;
 	}
 	if (oldPos + 9 > 64) {
@@ -113,11 +125,15 @@ function canJumpUpLeft(prevPos, board, myPiece, myKing, enemyPiece, enemyKing) {
 	if (upleft < 0) {
 		return false;
 	}
+	if (prevPos%8 <= 1) {
+		
+		return false;
+	}
 	if (board[prevPos] == AI) {
 		return false;
 	}
 	if ((board[prevPos-9] == enemyPiece || board[prevPos-9] == enemyKing) && board[prevPos-18] == WHITE) {
-		console.log("can jump up left");
+	
 		return true;
 	}
 	return false;
@@ -129,11 +145,14 @@ function canJumpUpRight(prevPos, board, myPiece, myKing, enemyPiece, enemyKing) 
 	if (upright < 0) {
 		return false;
 	}
+	if (prevPos%8 >= 6) {
+		return false;
+	}
 	if (board[prevPos] == AI) {
 		return false;
 	}
 	if ((board[prevPos-7] == enemyPiece || board[prevPos-7] == enemyKing) && board[prevPos-14] == WHITE) {
-		console.log("can jump up right");
+		
 		return true;
 	}
 	return false;
@@ -145,11 +164,14 @@ function canJumpDownLeft(prevPos, board, myPiece, myKing, enemyPiece, enemyKing)
 	if (upleft > 64) {
 		return false;
 	}
+	if (prevPos%8 <= 1) {
+		return false;
+	}
 	if (board[prevPos] == HUMAN) {
 		return false;
 	}
 	if ((board[prevPos+7] == enemyPiece || board[prevPos+7] == enemyKing) && board[prevPos+14] == WHITE) {
-		console.log("can jump down left");
+		
 		return true;
 	}
 	return false;
@@ -162,11 +184,14 @@ function canJumpDownRight(prevPos, board, myPiece, myKing, enemyPiece, enemyKing
 	if (upleft > 64) {
 		return false;
 	}
+	if (prevPos%8 >= 6) {
+		return false;
+	}
 	if (board[prevPos] == HUMAN) {
 		return false;
 	}
 	if ((board[prevPos+9] == enemyPiece || board[prevPos+9] == enemyKing) && board[prevPos+18] == WHITE) {
-		console.log("can jump down right");
+		
 		return true;
 	}
 	return false;
@@ -192,29 +217,28 @@ function getScore(board, depth) {
 	var count2 = 0;
 	for (var i = 1; i < board.length; i++) {
 		if ((((i%8)|0)+((i/8)|0))%2 != 0) {
-			if (board[i] == 1) {
+			if (board[i] == AI) {
 				count1++;
 				score += 1;
 				loseCheck = false;
-			} else if (board[i] == 2) {
+			} else if (board[i] == HUMAN) {
 				count2++;
 				score -= 1;
 				winCheck = false;
 			}
-			else if (board[i] == 12) {
+			else if (board[i] == HUMANKING) {
 				count2++;
 				score -= 1.5;
 				winCheck = false;
 			}
-			else if (board[i] == 11) {
+			else if (board[i] == AIKING) {
 				count2++;
 				score += 1.5;
 				loseCheck = false;
 			}
 		}
 	}
-		// console.log("Nmber of red = "+count1);
-		// console.log("Number of black = "+count2);
+
 	if (loseCheck) {
 		score -= 1000+depth;
 	} else if (winCheck) {
@@ -265,16 +289,36 @@ function node(board, parent) {
     this.parent = parent;
     this.score = 0;
 }
-
+var previousJump = -1;
 function move(id, board) {
+	if (testing) {
+		if (select_ai) {
+			if(board[id] == AI) {
+				board[id] = WHITE;
+			} else {
+				board[id] = AI;
+			}
+		}
+		if (select_human) {
+			if(board[id] == HUMAN) {
+				board[id] = WHITE;
+			} else {
+				board[id] = HUMAN;
+			}
+		}
+		paintWholeBoard();
+		return;
+	}
+
+
 	if (!playerTurn) {
-		console.log("Not the players turn!");
+		
 		return;
 	}
 	if (board[id] == HUMAN || board[id] == HUMANKING) {
 		previousClick = id;
 		waiting = true;
-		console.log("Ready to wait");
+		
 		return;
 	}
 	MUSTJUMP = false;
@@ -284,22 +328,23 @@ function move(id, board) {
 			
 			if (canJump(i, board, HUMAN, HUMANKING, AI, AIKING)) {
 				MUSTJUMP = true;
-				console.log("Someone can jump!");
+				
 				break;
 			}
 		}
 	}
-	if (!MUSTJUMP) {
-		console.log("No one can jump!");
-	} else {
-		console.log("Someone can jump!");
-	}
+
 	
 	paintWholeBoard(); // Debuggin purposes
 	if (waiting) {
 		
 		if (canJump(previousClick, board, HUMAN, HUMANKING, AI, AIKING)) {
-			console.log("Can jump");
+			if (previousJump != -1) {
+				if (previousJump != previousClick) {
+					return;
+				}
+			}
+		
 			var delPosition = getJump(id, board, HUMAN, HUMANKING, AI, AIKING);
 			if (delPosition == -1) {
 				return;
@@ -311,9 +356,11 @@ function move(id, board) {
 			changeColor(previousClick, WHITE);
 			board[id] = temp;
 			changeColor(id,temp);
+			previousJump = -1;
 			paintWholeBoard();
 			if (canJump(id, board, HUMAN, HUMANKING, AI, AIKING)) { //TODO change this to anyone can jump?
 				previousClick = id;
+				previousJump = previousClick;
 				MUSTJUMP = true;
 				return;
 			} else {
@@ -327,14 +374,13 @@ function move(id, board) {
 				return;
 			}
 		} else if (canMove(board, previousClick, id) && !MUSTJUMP) {
-			console.log("can't jump")
-			console.log(getMoveType(previousClick, id));
+			
 			if (getMoveType(previousClick, id) == -1) {
 				return;
 			} else if (getMoveType(previousClick, id) == UPLEFT && canMoveUpLeft(board, previousClick, board[previousClick])) {
 				moveUpLeft(board, previousClick);
 			} else if (getMoveType(previousClick, id) == UPRIGHT && canMoveUpRight(board, previousClick, board[previousClick])) {
-				console.log("moving up right");
+	
 				moveUpRight(board, previousClick);
 
 			} else if (getMoveType(previousClick, id) == DOWNLEFT && canMoveDownLeft(board, previousClick, board[previousClick])) {
@@ -361,14 +407,12 @@ function move(id, board) {
 
 			return;
 		} else if (MUSTJUMP) {
-			console.log("Must jump!");
 			return;
 		} else {
-			console.log("Can't jump or move");
 			return;
 		}
 	} else {
-		console.log("Not waiting");
+
 	}
 	if (board[id] != HUMAN && board[id] != HUMANKING) {
 		previousClick = id;

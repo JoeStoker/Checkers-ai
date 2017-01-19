@@ -113,7 +113,7 @@ function printBoard(board) {
 		}
 		str = str + "\n";
 	}
-	console.log(str);
+	
 }
 
 
