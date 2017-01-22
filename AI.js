@@ -42,24 +42,36 @@ function jumpUpLeft(board, oldPos) {
 	board[oldPos] = WHITE;
 	board[oldPos-9] = WHITE;
 	board[oldPos-18] = temp;
+	if (oldPos-18 <= 7 && board[oldPos-18] == HUMAN) {
+		board[oldPos-18] = HUMANKING;
+	}
 }
 function jumpUpRight(board, oldPos) {
 	var temp = board[oldPos];
 	board[oldPos] = WHITE;
 	board[oldPos-7] = WHITE;
 	board[oldPos-14] = temp;
+	if (oldPos-14 <= 7 && board[oldPos-14] == HUMAN) {
+		board[oldPos-14] = HUMANKING;
+	}
 }
 function jumpDownLeft(board, oldPos) {
 	var temp = board[oldPos];
 	board[oldPos] = WHITE;
 	board[oldPos+7] = WHITE;
 	board[oldPos+14] = temp;
+	if (oldPos+14 >= 56 && board[oldPos+14] == AI) {
+		board[oldPos+14] = AIKING;
+	}
 }
 function jumpDownRight(board, oldPos) {
 	var temp = board[oldPos];
 	board[oldPos] = WHITE;
 	board[oldPos+9] = WHITE;
 	board[oldPos+18] = temp;
+	if (oldPos+18 >= 56 && board[oldPos+18] == AI) {
+		board[oldPos+18] = AIKING;
+	}
 }
 
 var UPLEFTJUMP = -18;

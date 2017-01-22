@@ -250,6 +250,9 @@ function getScore(board, depth) {
 function moveUpLeft(board, oldPos) {
 	board[oldPos - 9] = board[oldPos];
 	board[oldPos] = WHITE;
+	if (oldPos - 9 <= 7 && board[oldPos - 9] == HUMAN) {
+		board[oldPos - 9] = HUMANKING;
+	}
 	//changeColor(oldPos,WHITE);
 	//changeColor(oldPos - 9, board[oldPos - 9]);
 }
@@ -257,6 +260,9 @@ function moveUpLeft(board, oldPos) {
 function moveUpRight(board, oldPos) {
 	board[oldPos - 7] = board[oldPos];
 	board[oldPos] = WHITE;
+	if (oldPos - 7 <= 7 && board[oldPos - 7] == HUMAN) {
+		board[oldPos - 7] = HUMANKING;
+	}
 	//changeColor(oldPos,WHITE);
 	//changeColor(oldPos - 7, board[oldPos - 7]);
 }
@@ -264,6 +270,9 @@ function moveUpRight(board, oldPos) {
 function moveDownLeft(board, oldPos) {
 	board[oldPos + 7] = board[oldPos];
 	board[oldPos] = WHITE;
+	if (oldPos + 7 >= 56 && board[oldPos + 7] == AI) {
+		board[oldPos + 7] = AIKING;
+	}
 	//changeColor(oldPos,WHITE);
 	//changeColor(oldPos + 7, board[oldPos + 7]);
 }
@@ -271,6 +280,9 @@ function moveDownLeft(board, oldPos) {
 function moveDownRight(board, oldPos) {
 	board[oldPos + 9] = board[oldPos];
 	board[oldPos] = WHITE;
+	if (oldPos + 9 >= 56 && board[oldPos + 9] == AI) {
+		board[oldPos + 9] = AIKING;
+	}
 	//changeColor(oldPos,WHITE);
 	//changeColor(oldPos + 9, board[oldPos + 9]);
 }
@@ -298,12 +310,23 @@ function move(id, board) {
 			} else {
 				board[id] = AI;
 			}
-		}
-		if (select_human) {
+		} else if (select_human) {
 			if(board[id] == HUMAN) {
 				board[id] = WHITE;
 			} else {
 				board[id] = HUMAN;
+			}
+		} else if (select_human_king) {
+			if(board[id] == HUMANKING) {
+				board[id] = WHITE;
+			} else {
+				board[id] = HUMANKING;
+			}
+		} else if (select_ai_king) {
+			if(board[id] == AIKING) {
+				board[id] = WHITE;
+			} else {
+				board[id] = AIKING;
 			}
 		}
 		paintWholeBoard();
@@ -355,6 +378,11 @@ function move(id, board) {
 			board[previousClick] = WHITE;
 			changeColor(previousClick, WHITE);
 			board[id] = temp;
+
+			if (id < 7 && board[id] == HUMAN) {	// Test for King after jump
+				board[id] = HUMANKING;
+			}
+
 			changeColor(id,temp);
 			previousJump = -1;
 			paintWholeBoard();
@@ -386,7 +414,7 @@ function move(id, board) {
 			} else if (getMoveType(previousClick, id) == DOWNLEFT && canMoveDownLeft(board, previousClick, board[previousClick])) {
 				moveDownLeft(board, previousClick);
 			} else if (getMoveType(previousClick, id) == DOWNRIGHT && canMoveDownRight(board, previousClick, board[previousClick])) {
-				moveUpRight(board, previousClick);
+				moveDownRight(board, previousClick);
 			} else {
 				return;
 			}	

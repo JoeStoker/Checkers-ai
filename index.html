@@ -31,15 +31,21 @@
 		<div id="test_div"><button id="test_button" style="margin:20px" onclick=testMode()> Test Mode</button></div>
 		<div id="select_human_div"><button id="select_human_button" style="margin:20px; display: none" onclick=selectHuman()> Select human pieces</button></div>
 		<div id="select_ai_div"><button id="select_ai_button" style="margin:20px; display: none" onclick=selectAi()> Select ai pieces</button></div>
+		<div id="select_human_king_div"><button id="select_human_king_button" style="margin:20px; display: none" onclick=selectHumanKing()> Select human king pieces</button></div>
+		<div id="select_ai_king_div"><button id="select_ai_king_button" style="margin:20px; display: none" onclick=selectAiKing()> Select ai king pieces</button></div>
 		<div id="load_test_1_div"><button id="load_test_1_button" style="margin:20px; display: none" onclick=loadTest1()> Load test case 1</button></div>
 		<div id="load_test_2_div"><button id="load_test_2_button" style="margin:20px; display: none" onclick=loadTest2()> Load test case 2</button></div>
 		<div id="load_test_3_div"><button id="load_test_3_button" style="margin:20px; display: none" onclick=loadTest3()> Load test case 3</button></div>
 		<div id="load_test_4_div"><button id="load_test_4_button" style="margin:20px; display: none" onclick=loadTest4()> Load test case 4</button></div>
+		<div id="load_test_5_div"><button id="load_test_5_button" style="margin:20px; display: none" onclick=loadTest5()> Load test case 5</button></div>
+		<div id="load_test_6_div"><button id="load_test_6_button" style="margin:20px; display: none" onclick=loadTest6()> Load test case 6</button></div>
 	</body>
 <script> 
 	var testing = false;
 	var select_ai = false;
 	var select_human = false;
+	var select_ai_king = false;
+	var select_human_king = false;
 	function testMode() {
 		
 		if (testing) {
@@ -49,10 +55,14 @@
 			document.getElementById("test_button").innerHTML = "Test Mode";
 			document.getElementById("select_human_button").style.display = "none";
 			document.getElementById("select_ai_button").style.display = "none";
+			document.getElementById("select_human_king_button").style.display = "none";
+			document.getElementById("select_ai_king_button").style.display = "none";
 			document.getElementById("load_test_1_button").style.display = "none";
 			document.getElementById("load_test_2_button").style.display = "none";
 			document.getElementById("load_test_3_button").style.display = "none";
-			document.getElementById("load_test_3_button").style.display = "none";
+			document.getElementById("load_test_4_button").style.display = "none";
+			document.getElementById("load_test_5_button").style.display = "none";
+			document.getElementById("load_test_6_button").style.display = "none";
 		} else {
 			testing = true;
 			select_human = true;
@@ -68,10 +78,14 @@
 			document.getElementById("test_button").innerHTML = "Start game";
 			document.getElementById("select_human_button").style.display = "block";
 			document.getElementById("select_ai_button").style.display = "block";
+			document.getElementById("select_human_king_button").style.display = "block";
+			document.getElementById("select_ai_king_button").style.display = "block";
 			document.getElementById("load_test_1_button").style.display = "block";
 			document.getElementById("load_test_2_button").style.display = "block";
 			document.getElementById("load_test_3_button").style.display = "block";
 			document.getElementById("load_test_4_button").style.display = "block";
+			document.getElementById("load_test_5_button").style.display = "block";
+			document.getElementById("load_test_6_button").style.display = "block";
 		}
 	}
 
@@ -113,14 +127,57 @@
 		paintWholeBoard();	
 	}
 
+	function loadTest5() {
+		board[26] = AI;
+		board[51] = AI;
+		board[14] = HUMAN;
+		board[30] = HUMAN;
+
+		paintWholeBoard();	
+	}
+
+	function loadTest6() {
+		board[19] = AI;
+		board[26] = AI;
+		board[28] = AI;
+		board[35] = AI;
+		board[53] = AIKING;
+		board[23] = HUMAN;
+		board[40] = HUMAN;
+		board[49] = HUMAN;
+		board[51] = HUMAN;
+		board[58] = HUMAN;
+		board[56] = HUMAN;
+
+		paintWholeBoard();	
+	} 
+
+	function selectAiKing() {
+		select_ai_king = true;
+		select_human_king = false;
+		select_ai = false;
+		select_human = false;
+	}
+
+	function selectHumanKing() {
+		select_ai_king = false;
+		select_human_king = true;
+		select_human = false;
+		select_ai = false;
+	}
+
 	function selectAi() {
 		select_ai = true;
 		select_human = false;
+		select_ai_king = false;
+		select_human_king = false;
 	}
 
 	function selectHuman() {
 		select_ai = false;
 		select_human = true;
+		select_ai_king = false;
+		select_human_king = false;
 	}
 </script>
 </html> 
