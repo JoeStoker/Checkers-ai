@@ -28,6 +28,7 @@
 	<body>
 		<div id="tablePrint" style="float:left"> </div>
 		<div id="graph"></div>
+		<div id="max_depth_div"><input id="max_depth_input" style="margin:20px" value="4"></input></div>
 		<div id="test_div"><button id="test_button" style="margin:20px" onclick=testMode()> Test Mode</button></div>
 		<div id="select_human_div"><button id="select_human_button" style="margin:20px; display: none" onclick=selectHuman()> Select human pieces</button></div>
 		<div id="select_ai_div"><button id="select_ai_button" style="margin:20px; display: none" onclick=selectAi()> Select ai pieces</button></div>
@@ -144,7 +145,7 @@
 		board[53] = AIKING;
 		board[23] = HUMAN;
 		board[40] = HUMAN;
-		board[49] = HUMAN;
+		//board[49] = HUMAN;
 		board[51] = HUMAN;
 		board[58] = HUMAN;
 		board[56] = HUMAN;

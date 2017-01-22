@@ -592,7 +592,11 @@ function makeAiMove() {
 	// } else {
 	// 	var maxDepth = 10;
 	// }
-	var maxDepth = 4;
+	var maxDepth = document.getElementById("max_depth_input").value;
+	if (maxDepth >= 7) {
+		alert("I recommend you choose a depth below 7!");
+		return;	
+	}
 	var rootNode = new node(board, null);
 	node_str += '],';
 	link_str += ']}';
